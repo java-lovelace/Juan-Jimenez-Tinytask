@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TinyTasks — Frontend</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+.task-done { text-decoration: line-through; opacity: 0.7; }
+</style>
+
+</head>
+<body class="bg-gray-50 min-h-screen">
+<header class="bg-white shadow-sm sticky top-0">
+<div class="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
+<h1 class="text-xl font-semibold">TinyTasks</h1>
+</div>
+</header>
+
+
+<main class="max-w-3xl mx-auto px-4 py-6">
+<div id="alerts" class="space-y-2"></div>
+
+
+<section class="bg-white rounded-lg shadow p-4 mb-6">
+<form id="addForm" class="flex gap-3">
+<input id="titleInput" type="text" placeholder="New task title (min 3 chars)" class="flex-1 px-3 py-2 border rounded focus:outline-none focus:ring" />
+<button id="addBtn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Add</button>
+</form>
+</section>
+
+
+<section>
+<h2 class="text-lg font-medium mb-3">Tasks</h2>
+<ul id="tasksList" class="space-y-2"></ul>
+<p id="emptyHint" class="mt-3 text-gray-500" style="display:none">No tasks yet. Add one!</p>
+</section>
+</main>
+
+
+<script src="app.js"></script>
+</body>
+</html>

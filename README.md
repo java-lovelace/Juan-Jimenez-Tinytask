@@ -1,48 +1,51 @@
-# TinyTasks — Full Project (Backend + Frontend)
+# TinyTasks — Full Stack Spring Boot + Tailwind App
 
-> **Autor:** Crudzaso  
-> **Frameworks:** Spring Boot (backend) + Tailwind (frontend)  
-> **Lenguaje:** Java 21  
-> **Testing:** JUnit 5  
-> **Persistencia:** En memoria  
-
-TinyTasks es una microaplicación diseñada para practicar un flujo completo **Front → API → Lógica → Datos** con la mínima estructura posible, pero respetando buenas prácticas de separación por capas y testabilidad.
+A minimal full-stack application to practice a clean layered architecture with Spring Boot and a native frontend (HTML + JS + Tailwind).  
+The project demonstrates the complete flow **Frontend → REST API → Logic → Data**, all running in-memory without any database.
 
 ---
 
-## 🧩 Estructura del proyecto
+## 🧩 Project Structure
 
-crudzaso-tinytasks/
-├─ backend/
-│ └─ src/main/java/com/crudzaso/tinytasks/
-│ ├─ controller/
-│ ├─ service/
-│ ├─ repository/
-│ ├─ model/
-│ └─ config/
-├─ frontend/
-│ ├─ index.html
-│ ├─ app.js
-│ └─ style.css (opcional)
-└─ README.md
-
-yaml
-Copiar código
+```
+tinytask/
+ ├─ src/
+ │   ├─ main/
+ │   │   ├─ java/
+ │   │   │   └─ com/project/tinytask/
+ │   │   │        ├─ controller/
+ │   │   │        ├─ entity/
+ │   │   │        ├─ repository/
+ │   │   │        ├─ service/
+ │   │   │        └─ TinytaskApplication.java
+ │   │   └─ resources/
+ │   │        ├─ static/
+ │   │        │    ├─ index.html
+ │   │        │    └─ app.js
+ │   │        ├─ templates/
+ │   │        └─ application.properties
+ └─ pom.xml
+```
 
 ---
 
 ## ⚙️ Backend (Spring Boot)
 
-### 📍 Endpoints
+### Base URL
+```
+http://localhost:8080/api/tasks
+```
 
-| Método | URL | Descripción |
-|--------|-----|--------------|
-| **GET** | `/api/tasks` | Lista todas las tareas |
-| **POST** | `/api/tasks` | Crea una nueva tarea |
-| **PUT** | `/api/tasks/{id}/toggle` | Alterna el estado `done` |
-| **DELETE** | `/api/tasks/{id}` | Elimina una tarea |
+### Endpoints
 
-### 💡 Formato de respuesta
+| Method | Path | Description |
+|--------|------|--------------|
+| **GET** | `/api/tasks` | Returns all tasks |
+| **POST** | `/api/tasks` | Creates a new task |
+| **PUT** | `/api/tasks/{id}/toggle` | Toggles the `done` state |
+| **DELETE** | `/api/tasks/{id}` | Deletes a task |
+
+### Example JSON Response
 
 ```json
 {
@@ -50,139 +53,115 @@ Copiar código
   "title": "Learn Spring Boot",
   "done": false
 }
-⚠️ Errores
-Código	Respuesta
-400	{ "error": "Title is required" }
-404	{ "error": "Not found" }
+```
 
-🚀 Ejecución del backend
-Desde la carpeta backend/, ejecuta:
+### Error Responses
 
-Usando Maven Wrapper (recomendado)
-bash
-Copiar código
-./mvnw spring-boot:run
-Usando Maven instalado globalmente
-bash
-Copiar código
-mvn spring-boot:run
-O construyendo y ejecutando el .jar
-bash
-Copiar código
-mvn package
-java -jar target/tinytasks-0.0.1-SNAPSHOT.jar
-La aplicación quedará disponible en:
-👉 http://localhost:8080
+| Code | Body |
+|------|------|
+| **400** | `{ "error": "Title is required" }` |
+| **404** | `{ "error": "Not found" }` |
 
-🔓 CORS
-Asegúrate de habilitar CORS para el origen del frontend, por ejemplo:
+---
 
-java
-Copiar código
-@CrossOrigin(origins = "http://localhost:5500")
-Esto permite que el navegador haga peticiones desde la app web servida localmente.
+### 🧠 Business Rules
 
-🧪 Pruebas unitarias (JUnit 5)
-Ejecutar todos los tests
-bash
-Copiar código
+- Task titles must be **at least 3 characters long**.
+- All data lives **in memory** (no database).
+- Each task contains:  
+  - `id: int`  
+  - `title: string`  
+  - `done: boolean`
+
+---
+
+### 🧪 Unit Tests (JUnit 5)
+
+Minimum required test cases:
+
+| Module | Test Case | Positive | Negative |
+|---------|------------|-----------|-----------|
+| **Service** | Create task | Valid title creates task with `done=false` | Invalid title throws exception |
+| **Service** | Toggle task | Flips `done` true/false | Nonexistent ID throws error |
+| **Service** | Delete task | Deletes successfully | Nonexistent ID returns false |
+
+#### Run all tests
+```bash
 ./mvnw test
-Ejecutar una clase específica
-bash
-Copiar código
+```
+
+#### Run a single test class
+```bash
 ./mvnw -Dtest=TaskServiceTest test
-Casos mínimos exigidos
-Módulo	Caso	Positivo	Negativo
-Service	Crear tarea	Título válido crea tarea con done=false	Título vacío o corto lanza excepción
-Service	Alternar estado	Cambia done de false → true o viceversa	ID inexistente lanza error o devuelve vacío
-Service	Eliminar tarea	Elimina correctamente	ID inexistente devuelve false
+```
 
-💻 Frontend (Tailwind)
-🌐 Requisitos previos
-Navegador moderno (Chrome, Firefox, Edge)
+---
 
-Backend corriendo en http://localhost:8080
+## 💻 Frontend (Tailwind)
 
-Servidor local para servir archivos estáticos (Live Server, npx http-server, o python -m http.server)
+The frontend is served directly by Spring Boot from `/src/main/resources/static`.
 
-📁 Estructura del frontend
-pgsql
-Copiar código
-frontend/
- ├─ index.html
- └─ app.js
-🏃 Ejecutar el frontend
-Opción 1 — VS Code Live Server (recomendado)
-Abre la carpeta frontend/ en VS Code.
+### Files
 
-Instala la extensión Live Server.
+- `index.html` — Main UI (uses Tailwind via CDN)
+- `app.js` — Fetches data and interacts with the REST API
 
-Haz clic derecho en index.html → Open with Live Server.
+### Access
 
-Se abrirá una URL como http://127.0.0.1:5500 (usa esa en @CrossOrigin).
+Once the backend is running, open:
 
-Opción 2 — Node.js (sin instalación global)
-bash
-Copiar código
-npx http-server -p 5500
-Opción 3 — Python 3
-bash
-Copiar código
-python -m http.server 5500
-Ahora abre:
-👉 http://localhost:5500
-(o la dirección que indique tu servidor local)
+👉 **http://localhost:8080**
 
-🧠 Flujo de interacción
-Listar tareas:
-GET http://localhost:8080/api/tasks
+The UI allows:
+- Listing all tasks  
+- Adding a new task  
+- Toggling completed/pending  
+- Deleting a task  
 
-Crear tarea:
-POST con body JSON:
+---
 
-json
-Copiar código
-{ "title": "Learn Tailwind" }
-Alternar estado:
-PUT http://localhost:8080/api/tasks/{id}/toggle
+### Example API Calls (cURL)
 
-Eliminar tarea:
-DELETE http://localhost:8080/api/tasks/{id}
-
-🧰 Ejemplos con cURL
-bash
-Copiar código
-# Listar todas las tareas
+```bash
+# List all tasks
 curl http://localhost:8080/api/tasks
 
-# Crear una nueva tarea
+# Create a task
 curl -X POST -H "Content-Type: application/json" -d '{"title":"Buy milk"}' http://localhost:8080/api/tasks
 
-# Alternar estado
+# Toggle a task
 curl -X PUT http://localhost:8080/api/tasks/1/toggle -i
 
-# Eliminar tarea
+# Delete a task
 curl -X DELETE http://localhost:8080/api/tasks/1 -i
-🧯 Solución de problemas
-Problema	Solución
-CORS error	Agregar @CrossOrigin(origins = "http://localhost:5500") en el controlador
-El backend no responde	Verifica que Spring Boot esté corriendo en el puerto 8080
-JS no carga	Asegúrate de que index.html y app.js estén en la misma carpeta
-Frontend no se actualiza	Limpia la caché del navegador o reinicia Live Server
+```
 
-🧱 Mejoras opcionales
-Configurar Tailwind con npm y postcss para compilación optimizada.
+---
 
-Añadir animaciones (p. ej. transición al crear o eliminar tareas).
+## 🚀 Run the Application
 
-Implementar edición de tareas en línea.
+From the project root:
 
-Agregar pruebas de interfaz con Playwright o Cypress.
+```bash
+./mvnw spring-boot:run
+```
 
-✅ Conclusión
-TinyTasks es un ejercicio completo pero minimalista para dominar el ciclo:
-Frontend → API → Lógica → Datos,
-siguiendo buenas prácticas de capas, manejo de errores y pruebas unitarias.
+Then open your browser at:
 
-yaml
-Copiar código
+👉 `http://localhost:8080`
+
+---
+
+## 🔓 CORS
+
+CORS is configured with a wildcard (`*`), allowing any origin.  
+This setup is suitable for local development but **not recommended for production**.
+
+---
+
+
+## ✅ Summary
+
+TinyTasks demonstrates how to build a clean and functional full-stack app:
+**Frontend → REST API → Business Logic → Data (in memory)**,  
+with clear separation of layers and testable logic.
